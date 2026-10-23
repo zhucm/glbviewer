@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GLB Viewer · 模型预览</title>
+    <link rel="stylesheet" href="/src/glb-preview.css" />
+  </head>
+  <body>
+    <header><div><span class="eyebrow">GLB VIEWER / MODEL PREVIEW</span><h1>GLB 模型预览</h1></div></header>
+    <main>
+      <aside aria-label="模型文件">
+        <section class="sources">
+          <h2>选择模型来源</h2>
+          <div class="actions"><button id="folder-picker" type="button">选择文件夹</button><label class="button secondary">选择文件<input id="file-input" class="sr-only" type="file" accept=".glb" multiple /></label><button id="url-picker" class="secondary" type="button">在线链接</button></div>
+          <p class="hint">选择本机文件夹或 GLB 文件后，点击下方列表中的模型进行预览；也可将 GLB 文件拖入页面直接预览。</p>
+        </section>
+        <div class="list-heading"><h2>模型列表</h2><div class="list-controls"><div class="view-switch" role="group" aria-label="模型展示方式"><button id="list-view" type="button" aria-pressed="true">列表</button><button id="grid-view" type="button" aria-pressed="false">图标</button></div><span id="file-count">0 个</span><button id="clear-list" class="clear-list" type="button" aria-label="清空模型列表" title="清空列表（不删除文件）" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h11M4 12h8M4 18h11M17 9l5 5M22 9l-5 5" /></svg></button></div></div>
+        <label class="search"><span class="sr-only">筛选文件名</span><input id="search" type="search" placeholder="搜索文件名或相对路径" /></label>
+        <div id="file-list" aria-label="选择要预览的 GLB"></div>
+        <p id="list-empty" class="hint empty-list">选择文件夹或文件，开始预览。</p>
+      </aside>
+      <div id="splitter" class="splitter" role="separator" aria-label="调整模型列表宽度" aria-orientation="vertical" aria-valuemin="240" aria-valuenow="320" tabindex="0"></div>
+      <section class="viewer" aria-label="三维模型预览">
+        <div id="viewport"></div>
+        <div class="viewer-controls">
+          <button id="animation-play" class="animation-play" type="button" aria-label="播放动画" aria-pressed="false" title="播放动画" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path id="animation-icon" d="M8 5v14l11-7z" /></svg></button>
+          <button id="auto-rotate" class="auto-rotate" type="button" aria-label="自动旋转" aria-pressed="false" title="自动旋转" disabled><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M14,12L10,16L14,20V16.9C18.56,16.44 22,14.42 22,12C22,9.58 18.56,7.56 14,7.1V9.09C17.45,9.43 20,10.6 20,12C20,13.4 17.45,14.57 14,14.91V12M4,12C4,10.6 6.55,9.43 10,9.09V7.1C5.44,7.56 2,9.58 2,12C2,14.16 4.74,16 8.58,16.7L7.88,16L9.08,14.79C6.11,14.36 4,13.27 4,12M13,2H11V13L13,11V2M13,22V21L11,19V22H13Z" /></svg></button>
+          <button id="reset-view" type="button" aria-label="重置视角" title="重置视角" disabled><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12,3A9,9 0 0,0 3,12H0L4,16L8,12H5A7,7 0 0,1 12,5A7,7 0 0,1 19,12A7,7 0 0,1 12,19C10.5,19 9.09,18.5 7.94,17.7L6.5,19.14C8.04,20.3 9.94,21 12,21A9,9 0 0,0 21,12A9,9 0 0,0 12,3M14,12A2,2 0 0,0 12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12Z" /></svg></button>
+        </div>
+        <div class="viewer-heading"><h2 id="model-name">尚未选择模型</h2><div class="model-address"><p id="model-path"></p><button id="copy-model-url" type="button" aria-label="复制在线地址" title="复制在线地址" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg></button><span id="copy-url-feedback" role="status" hidden>已复制</span></div><p id="part-info"></p></div>
+        <p id="status" role="status" aria-live="polite">选择左侧文件，预览模型形状与材质</p>
+        <footer><span>单击选择部件 · 拖动旋转 · 滚轮缩放 · 右键平移</span><span id="model-info"></span></footer>
+      </section>
+    </main>
+    <dialog id="url-dialog" class="url-dialog" aria-labelledby="url-dialog-title">
+      <form id="url-source" novalidate>
+        <h2 id="url-dialog-title">打开在线 GLB</h2>
+        <input id="model-url" type="url" aria-label="在线 GLB 地址" aria-describedby="url-error" placeholder="粘贴在线 GLB 地址" />
+        <p id="url-error" class="url-error" role="alert" hidden></p>
+        <section id="recent-urls" class="recent-urls" hidden><h3>最近访问</h3><ol id="recent-url-list"></ol></section>
+        <div class="dialog-actions"><button id="cancel-url" class="secondary" type="button">取消</button><button type="submit">打开</button></div>
+      </form>
+    </dialog>
+    <script type="module" src="/src/glb-preview.js"></script>
+  </body>
+</html>
