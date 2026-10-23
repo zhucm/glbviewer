@@ -8,7 +8,15 @@ const localFiles = {
 };
 
 export default defineConfig({
+  base: './',
   plugins: [localFiles],
+  build: {
+    rollupOptions: {
+      output: {
+        assetFileNames: ({ name }) => name === 'favicon.svg' ? 'favicon.svg' : 'assets/[name]-[hash][extname]',
+      },
+    },
+  },
   server: {
     host: '127.0.0.1',
     port: 5174,

@@ -7,6 +7,8 @@
 ## 目录与命名
 
 - `index.html` 是唯一页面入口，CSS 在 `<head>` 中通过 `<link>` 加载。
+- `favicon.svg` 放在项目根目录，作为页面标签图标。
+- `public/favicon.png` 由根目录的 `favicon.svg` 转换生成，仅用于 Open Graph 图片；修改 SVG 后同步重新生成 PNG。
 - `src/glb-preview.js` 管理列表、模型加载、相机和渲染；`src/glb-preview.css` 管理页面样式。
 - `tools/glb-preview-server.js` 为本地 Vite 服务提供只读目录扫描和文件读取接口；同目录 `.test.js` 验证接口行为。
 - `README.md` 说明安装、运行、功能及与 `glbcreater` 的配合；`.gitignore` 排除依赖和构建产物。
